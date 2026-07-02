@@ -12,6 +12,10 @@ pipeline {
     disableConcurrentBuilds()
   }
 
+  parameters {
+    string(name: 'SONAR_PROJECT_KEY', defaultValue: 'tasklist-backend-exam', description: 'SonarQube project key used for this Jenkins run')
+  }
+
   stages {
     stage('Install dependencies') {
       steps {
@@ -53,6 +57,7 @@ pipeline {
               -e SONAR_TOKEN="$SONAR_TOKEN" \
               -v "$PWD:/usr/src" \
               sonarsource/sonar-scanner-cli:latest \
+              -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
               -Dsonar.token="$SONAR_TOKEN" \
               -Dsonar.qualitygate.wait=true
           '''
