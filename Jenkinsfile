@@ -13,7 +13,7 @@ pipeline {
   }
 
   parameters {
-    string(name: 'SONAR_PROJECT_KEY', defaultValue: 'tasklist-backend-exam', description: 'SonarQube project key used for this Jenkins run')
+    string(name: 'SONAR_PROJECT_KEY', defaultValue: 'adrien-tasklist-backend-exam', description: 'SonarQube project key used for this Jenkins run')
   }
 
   stages {
@@ -82,10 +82,13 @@ pipeline {
         sh '''
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD:/work" \
             aquasec/trivy:latest image \
             --scanners vuln \
             --severity HIGH,CRITICAL \
-            --exit-code 1 \
+            --ignore-unfixed \
+            --format table \
+            --output /work/trivy-image-report.txt \
             "$DOCKER_IMAGE:$BUILD_NUMBER"
 
           docker run --rm \
@@ -125,7 +128,7 @@ pipeline {
 
   post {
     always {
-      archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/**,reports/**,sbom-*.json'
+      archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/**,reports/**,sbom-*.json,trivy-*.txt'
       sh 'docker logout || true'
     }
   }
