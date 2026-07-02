@@ -50,7 +50,7 @@ pipeline {
 
     stage('SonarQube analysis') {
       steps {
-        withCredentials([string(credentialsId: 'adripain-sonar-token-backend', variable: 'SONAR_TOKEN')]) {
+        withCredentials([string(credentialsId: 'adrien-sonar-token-backend', variable: 'SONAR_TOKEN')]) {
           sh '''
             docker run --rm \
               -e SONAR_HOST_URL="$SONAR_HOST_URL" \
@@ -109,7 +109,7 @@ pipeline {
 
     stage('Publish Docker Hub') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'adripain-dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_TOKEN')]) {
+        withCredentials([usernamePassword(credentialsId: 'adrien-dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_TOKEN')]) {
           sh '''
             REMOTE_IMAGE="$DOCKERHUB_USERNAME/$DOCKER_IMAGE"
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
