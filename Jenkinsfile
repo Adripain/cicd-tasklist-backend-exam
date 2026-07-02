@@ -2,6 +2,7 @@ pipeline {
   agent any
 
   environment {
+    DATABASE_URL = 'mysql://root:password@localhost:3306/tasklist'
     DOCKER_IMAGE = 'tasklist-backend-exam'
     SONAR_HOST_URL = 'https://sonarqube.cicd.kits.ext.educentre.fr'
   }
