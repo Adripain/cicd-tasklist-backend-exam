@@ -50,13 +50,14 @@ pipeline {
 
     stage('SonarQube analysis') {
       steps {
-        withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+        withCredentials([string(credentialsId: 'sonarqube-token-backend', variable: 'SONAR_TOKEN')]) {
           sh '''
             docker run --rm \
               -e SONAR_HOST_URL="$SONAR_HOST_URL" \
               -e SONAR_TOKEN="$SONAR_TOKEN" \
               -v "$PWD:/usr/src" \
               sonarsource/sonar-scanner-cli:latest \
+              -Dproject.settings=sonar-project.properties \
               -Dsonar.projectKey="$SONAR_PROJECT_KEY" \
               -Dsonar.token="$SONAR_TOKEN" \
               -Dsonar.qualitygate.wait=true
