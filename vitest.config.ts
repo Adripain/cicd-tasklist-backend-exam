@@ -2,6 +2,7 @@ import { defineConfig } from "vitest/config";
 
 const coverageDirectory = process.env.COVERAGE_DIR ?? "coverage";
 const junitOutputFile = process.env.JUNIT_REPORT ?? "reports/junit.xml";
+const branchThreshold = Number(process.env.BRANCH_THRESHOLD ?? 70);
 
 export default defineConfig({
   test: {
@@ -19,6 +20,9 @@ export default defineConfig({
         "src/server.ts",
         "**/*.config.ts",
       ],
+      thresholds: {
+        branches: branchThreshold,
+      },
     },
     reporters: ["default", "junit"],
     outputFile: {

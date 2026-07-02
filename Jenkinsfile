@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKERHUB_IMAGE = 'adripain/cicd-tasklist-backend-exam'
+    DOCKER_IMAGE = 'tasklist-backend-exam'
     SONAR_HOST_URL = 'https://sonarqube.cicd.kits.ext.educentre.fr'
   }
 
@@ -63,8 +63,8 @@ pipeline {
       steps {
         sh '''
           docker build \
-            -t "$DOCKERHUB_IMAGE:$BUILD_NUMBER" \
-            -t "$DOCKERHUB_IMAGE:latest" \
+            -t "$DOCKER_IMAGE:$BUILD_NUMBER" \
+            -t "$DOCKER_IMAGE:latest" \
             .
         '''
       }
@@ -79,7 +79,7 @@ pipeline {
             --scanners vuln \
             --severity HIGH,CRITICAL \
             --exit-code 1 \
-            "$DOCKERHUB_IMAGE:$BUILD_NUMBER"
+            "$DOCKER_IMAGE:$BUILD_NUMBER"
 
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
@@ -87,7 +87,7 @@ pipeline {
             aquasec/trivy:latest image \
             --format cyclonedx \
             --output /work/sbom-cyclonedx.json \
-            "$DOCKERHUB_IMAGE:$BUILD_NUMBER"
+            "$DOCKER_IMAGE:$BUILD_NUMBER"
 
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
@@ -95,7 +95,7 @@ pipeline {
             aquasec/trivy:latest image \
             --format spdx-json \
             --output /work/sbom-spdx.json \
-            "$DOCKERHUB_IMAGE:$BUILD_NUMBER"
+            "$DOCKER_IMAGE:$BUILD_NUMBER"
         '''
       }
     }
@@ -104,9 +104,12 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_TOKEN')]) {
           sh '''
+            REMOTE_IMAGE="$DOCKERHUB_USERNAME/$DOCKER_IMAGE"
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push "$DOCKERHUB_IMAGE:$BUILD_NUMBER"
-            docker push "$DOCKERHUB_IMAGE:latest"
+            docker tag "$DOCKER_IMAGE:$BUILD_NUMBER" "$REMOTE_IMAGE:$BUILD_NUMBER"
+            docker tag "$DOCKER_IMAGE:latest" "$REMOTE_IMAGE:latest"
+            docker push "$REMOTE_IMAGE:$BUILD_NUMBER"
+            docker push "$REMOTE_IMAGE:latest"
           '''
         }
       }
