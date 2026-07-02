@@ -7,9 +7,9 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "vitest run --config vitest.config.ts unit",
-    "test:coverage": "vitest run --config vitest.config.ts unit --coverage",
+    "test:coverage": "COVERAGE_DIR=coverage/unit JUNIT_REPORT=reports/junit-unit.xml vitest run --config vitest.config.ts unit --coverage",
     "test:e2e": "vitest run --config vitest.config.ts e2e",
-    "test:e2e:coverage": "vitest run --config vitest.config.ts e2e --coverage",
+    "test:e2e:coverage": "COVERAGE_DIR=coverage/e2e JUNIT_REPORT=reports/junit-e2e.xml vitest run --config vitest.config.ts e2e --coverage",
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate"
   },

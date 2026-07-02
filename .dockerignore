@@ -1,0 +1,10 @@
+.git
+.env
+node_modules
+dist
+coverage
+reports
+sbom-*.json
+prisma/test.db
+npm-debug.log*
+.DS_Store

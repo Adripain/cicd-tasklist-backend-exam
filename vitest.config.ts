@@ -1,5 +1,8 @@
 import { defineConfig } from "vitest/config";
 
+const coverageDirectory = process.env.COVERAGE_DIR ?? "coverage";
+const junitOutputFile = process.env.JUNIT_REPORT ?? "reports/junit.xml";
+
 export default defineConfig({
   test: {
     globals: true,
@@ -9,7 +12,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov", "json-summary"],
-      reportsDirectory: "coverage",
+      reportsDirectory: coverageDirectory,
       include: ["src/**/*.ts"],
       exclude: [
         "src/__tests__/**",
@@ -19,7 +22,7 @@ export default defineConfig({
     },
     reporters: ["default", "junit"],
     outputFile: {
-      junit: "reports/junit.xml",
+      junit: junitOutputFile,
     },
   },
 });
